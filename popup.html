@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kayako Resizer</title>
+    <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+    <h2>Kayako Resizer</h2>
+    
+    <div class="section">
+        <h3>Main Editor</h3>
+        <label for="min-size">Min Height (px):</label>
+        <input type="number" id="min-size" min="44" max="1000" step="10">
+
+        <label for="max-size">Max Height (px):</label>
+        <input type="number" id="max-size" min="100" max="1000" step="10">
+
+        <button id="apply">Apply Main Editor</button>
+    </div>
+
+    <div class="section">
+        <h3>Side Conversation Editor</h3>
+        <label for="side-min-width">Min Width (px):</label>
+        <input type="number" id="side-min-width" min="300" max="800" step="10">
+
+        <label for="side-min-height">Min Height (px):</label>
+        <input type="number" id="side-min-height" min="50" max="500" step="10">
+
+        <label for="side-max-height">Max Height (px):</label>
+        <input type="number" id="side-max-height" min="100" max="600" step="10">
+
+        <button id="apply-side">Apply Side Editor</button>
+    </div>
+
+    <script src="popup.js"></script>
+</body>
+</html>
+
