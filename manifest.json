@@ -1,10 +1,13 @@
 {
   "manifest_version": 3,
   "name": "Kayako Resizer",
-  "version": "1.2.1",
+  "version": "1.2.3",
   "description": "Resize the Kayako text editors dynamically.",
-  "permissions": ["scripting", "activeTab", "storage"],
-  "host_permissions": ["*://*.kayako.com/agent/*"],
+  "permissions": ["cookies", "scripting", "activeTab", "storage"],
+  "optional_host_permissions": ["<all_urls>"],
+  "host_permissions": [
+    "https://*/*"
+  ],
   "action": {
     "default_popup": "popup.html",
     "default_icon": {
@@ -14,7 +17,7 @@
     }
   },
   "background": {
-    "service_worker": "background.js"
+    "service_worker": "background.bundled.js"
   },
   "content_scripts": [
     {
