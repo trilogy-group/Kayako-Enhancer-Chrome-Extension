@@ -57,3 +57,66 @@ button {
 button:hover {
     background-color: #0056b3;
 }
+
+/* Warning Message */
+.warning {
+    background-color: #fff3cd;
+    color: #856404;
+    padding: 8px 12px;
+    border-radius: 4px;
+    margin-bottom: 12px;
+    font-size: 12px;
+    line-height: 1.4;
+    border-left: 3px solid #ffeeba;
+}
+
+/* Toggle Switch Styles */
+.toggle-container {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    margin: 15px 0;
+    user-select: none;
+}
+
+.toggle-container input[type="checkbox"] {
+    display: none;
+}
+
+.toggle-slider {
+    position: relative;
+    display: inline-block;
+    width: 40px;
+    height: 20px;
+    background-color: #ccc;
+    border-radius: 20px;
+    margin-right: 10px;
+    transition: .4s;
+    flex-shrink: 0;
+}
+
+.toggle-slider:before {
+    content: "";
+    position: absolute;
+    height: 16px;
+    width: 16px;
+    left: 2px;
+    bottom: 2px;
+    background-color: white;
+    border-radius: 50%;
+    transition: .4s;
+}
+
+input:checked + .toggle-slider {
+    background-color: #007bff;
+}
+
+input:checked + .toggle-slider:before {
+    transform: translateX(20px);
+}
+
+.toggle-label {
+    font-size: 13px;
+    font-weight: normal;
+    color: #333;
+}

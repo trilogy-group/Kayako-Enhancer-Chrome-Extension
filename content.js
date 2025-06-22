@@ -192,6 +192,107 @@ function attachAllListeners() {
 
 // --- CORE LOGIC ---
 
+// Function to toggle event visibility
+function toggleEvents(hide) {
+    const styleId = 'kayako-events-style';
+    let style = document.getElementById(styleId);
+    
+    if (hide) {
+        if (!style) {
+            style = document.createElement('style');
+            style.id = styleId;
+            style.textContent = `
+                /* Target only standard timeline posts that are direct children of the timeline list */
+                .ko-timeline-2_list_post__post_1nm4l4 > .ko-timeline-2_list_post__standard_1nm4l4 {
+                    display: none !important;
+                }
+                
+                /* Ensure the parent post element is also hidden */
+                .ko-timeline-2_list_post__post_1nm4l4:has(> .ko-timeline-2_list_post__standard_1nm4l4) {
+                    display: none !important;
+                }
+            `;
+            document.head.appendChild(style);
+        }
+    } else {
+        if (style) {
+            style.remove();
+        }
+    }
+}
+
+// Function to toggle internal notes visibility
+function toggleInternalNotes(hide) {
+    const styleId = 'kayako-internal-notes-style';
+    let style = document.getElementById(styleId);
+    
+    if (hide) {
+        if (!style) {
+            style = document.createElement('style');
+            style.id = styleId;
+            style.textContent = `
+                /* Target all internal notes */
+                .ko-timeline-2_list_item__note_1oksrd {
+                    display: none !important;
+                }
+                
+                /* Ensure the parent post element is also hidden */
+                .ko-timeline-2_list_post__post_1nm4l4:has(> .ko-timeline-2_list_item__note_1oksrd) {
+                    display: none !important;
+                }
+            `;
+            document.head.appendChild(style);
+        }
+    } else {
+        if (style) {
+            style.remove();
+        }
+    }
+}
+
+// Function to toggle day separators visibility
+function toggleDaySeparators(hide) {
+    const styleId = 'kayako-day-separators-style';
+    let style = document.getElementById(styleId);
+    
+    if (hide) {
+        if (!style) {
+            style = document.createElement('style');
+            style.id = styleId;
+            style.textContent = `
+                /* Target all day separators - multiple selectors for better coverage */
+                .ko-timeline-2_list_days__day-separator_1bbqo9,
+                [class*='day-separator'] {
+                    display: none !important;
+                    opacity: 0 !important;
+                    height: 0 !important;
+                    padding: 0 !important;
+                    margin: 0 !important;
+                    border: none !important;
+                    visibility: hidden !important;
+                }
+                
+                /* Also target the parent container that might be controlling visibility */
+                [class*='ko-timeline-2_list_days'] {
+                    min-height: 0 !important;
+                }
+            `;
+            document.head.appendChild(style);
+            
+            // Force a reflow to ensure styles are applied
+            document.body.offsetHeight;
+        }
+    } else {
+        if (style) {
+            style.remove();
+        }
+    }
+    
+    // Debug: Log the current state and found elements
+    console.log('Day separators hidden:', hide);
+    console.log('Found day separators:', document.querySelectorAll('.ko-timeline-2_list_days__day-separator_1bbqo9, [class*="day-separator"]').length);
+}
+
 // Listen for messages from popup.js
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.action === "resize") {
@@ -207,9 +308,14 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
             sideMinHeight: request.minHeight,
             sideMaxHeight: request.maxHeight
         });
+    } else if (request.action === "toggleEvents") {
+        toggleEvents(request.hide);
+    } else if (request.action === "toggleInternalNotes") {
+        toggleInternalNotes(request.hide);
+    } else if (request.action === "toggleDaySeparators") {
+        toggleDaySeparators(request.hide);
     }
 });
-
 
 // Use a single MutationObserver to handle all dynamic changes
 const observer = new MutationObserver(() => {
@@ -225,3 +331,16 @@ observer.observe(document.body, { childList: true, subtree: true });
 // Also run once on initial load
 applyAllEditorSizes();
 attachAllListeners();
+
+// Apply saved visibility states on load
+chrome.storage.local.get(["hideEvents", "hideInternalNotes", "hideDates"], (data) => {
+    if (data.hideEvents) {
+        toggleEvents(true);
+    }
+    if (data.hideInternalNotes) {
+        toggleInternalNotes(true);
+    }
+    if (data.hideDates) {
+        toggleDaySeparators(true);
+    }
+});

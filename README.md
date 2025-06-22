@@ -1,22 +1,26 @@
 # Kayako Resizer Chrome Extension
 
-The Kayako Resizer is a browser extension designed to enhance the agent experience in Kayako by allowing for dynamic and persistent resizing of the text editors.
-It is not an official subproduct from Kayako, but a way Central Support used to take control of our workspace by adjusting the main editor's height and the side conversation panel's dimensions to fit our workflow.
+The Kayako Resizer is a browser extension designed to enhance the agent experience in Kayako by allowing for dynamic and persistent resizing of the text editors. Take control of your workspace by adjusting the main editor's height and the side conversation panel's dimensions to fit your workflow.
 
 ## Features
 
-This extension provides two convenient ways to resize the Kayako editors:
+This extension provides several ways to customize your Kayako experience:
 
-1.  **Popup Controls**:
-    * Click the extension icon in your browser toolbar to open a control panel.
-    * **Main Editor**: Set specific `min-height` and `max-height` values in pixels.
-    * **Side Conversation Editor**: Independently control the `min-width`, `min-height`, and `max-height`.
-    * Your settings are saved automatically and will persist across browser sessions.
+1.  **Editor Resizing**:
+    * **Popup Controls**:
+        - Click the extension icon to open the control panel
+        - Set specific dimensions for Main Editor and Side Conversation Editor
+    * **Drag-to-Resize**:
+        - Main Editor: Hover over the top edge and drag to adjust height
+        - Side Panel: Hover over the left edge and drag to adjust width
+    * All size settings are saved automatically
 
-2.  **Drag-to-Resize (Interactive Mode)**:
-    * **Main Editor (Height)**: Simply hover your mouse over the top edge of the main text editor. When the cursor changes to a resize icon (`row-resize`), click and drag vertically to adjust its height.
-    * **Side Conversation Panel (Width)**: Hover over the left edge of the open side conversation panel. When the cursor changes to a resize icon (`col-resize`), click and drag horizontally to adjust its width.
-    * The dimensions are automatically saved upon releasing the mouse, updating the values in the popup.
+2.  **Timeline Customization**:
+    * Toggle visibility of different timeline elements:
+        - **Events**: Show/hide system events
+        - **Internal Notes**: Toggle internal notes
+        - **Date Separators**: Show/hide date dividers
+    * Note: Hiding many elements may affect infinite scroll. If content doesn't load, try showing elements, scrolling to load more, then re-hiding.
 
 ## How to Use
 
@@ -26,6 +30,7 @@ This extension provides two convenient ways to resize the Kayako editors:
 2.  Click on the **Kayako Resizer icon** in the Chrome toolbar.
 3.  Enter your desired pixel values into the input fields for either the "Main Editor" or "Side Conversation Editor".
 4.  Click the corresponding **Apply** button to see the changes immediately.
+5.  Use the toggle switches to show/hide timeline elements like system events, internal notes, and date separators.
 
 ### Using Drag-to-Resize
 
@@ -53,4 +58,5 @@ To install the extension locally for development or personal use:
 
 ## Compatibility
 
-This extension is specifically created for the CS agent view of the Kayako platform (URLs matching `*://*.kayako.com/agent/*`). It may not function correctly on other parts of Kayako or on other Kayako instances.
+This extension is specifically designed to work with the agent view of the Kayako platform (URLs matching `*://*.kayako.com/agent/*`). It may not function correctly on other parts of Kayako or on other websites.
+        
