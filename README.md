@@ -1,4 +1,4 @@
-# Kayako Resizer Chrome Extension
+# Kayako Enhancer Chrome Extension
 
 The Kayako Resizer is a browser extension designed to enhance the agent experience in Kayako by allowing for dynamic and persistent resizing of the text editors. Take control of your workspace by adjusting the main editor's height and the side conversation panel's dimensions to fit your workflow.
 
