@@ -59,4 +59,3 @@ To install the extension locally for development or personal use:
 ## Compatibility
 
 This extension is specifically designed to work with the agent view of the Kayako platform (URLs matching `*://*.kayako.com/agent/*`). It may not function correctly on other parts of Kayako or on other websites.
-        
