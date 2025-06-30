@@ -46,7 +46,7 @@ function applyAllEditorSizes() {
 }
 
 
-// --- NEW DRAG-TO-RESIZE FUNCTIONALITY ---
+// --- DRAG-TO-RESIZE FUNCTIONALITY STARTS HERE ---
 
 /**
  * Initializes drag-to-resize for the main text editor (vertical resizing).
@@ -72,43 +72,51 @@ function initMainEditorDraggable(container) {
         if (e.clientY - rect.top <= 10) { // Check if the mousedown is on the handle
             e.preventDefault();
 
-            const startY = e.clientY;
-            const resizable = container.querySelector('.fr-element.fr-view');
-            if (!resizable) return;
+            // Fetch min and max from storage
+            chrome.storage.local.get(["editorMinHeight", "editorMaxHeight"], (data) => {
+                const minHeight = data.editorMinHeight || defaultMinHeight;
+                const maxHeight = data.editorMaxHeight || defaultMaxHeight;
 
-            const startH = resizable.offsetHeight;
-            let lastDY = 0;
-            let rafScheduled = false;
+                const startY = e.clientY;
+                const resizable = container.querySelector('.fr-element.fr-view');
+                if (!resizable) return;
 
-            function updateHeight() {
-                const newHeight = startH - lastDY;
-                resizable.style.height = newHeight + 'px';
-                 // Also update max-height to allow expansion
-                const wrapper = container.querySelector('.fr-wrapper');
-                if(wrapper) wrapper.style.maxHeight = (newHeight + 50) + 'px'; // Add some buffer
-                rafScheduled = false;
-            }
+                const startH = resizable.offsetHeight;
+                let lastDY = 0;
+                let rafScheduled = false;
 
-            function move(e) {
-                lastDY = e.clientY - startY;
-                if (!rafScheduled) {
-                    rafScheduled = true;
-                    requestAnimationFrame(updateHeight);
+                function updateHeight() {
+                    let newHeight = startH - lastDY;
+                    // Clamp newHeight between minHeight and maxHeight
+                    newHeight = Math.max(minHeight, Math.min(newHeight, maxHeight));
+                    resizable.style.height = newHeight + 'px';
+                    // Set maxHeight directly, no buffer
+                    const wrapper = container.querySelector('.fr-wrapper');
+                    if(wrapper) wrapper.style.maxHeight = maxHeight + 'px';
+                    rafScheduled = false;
                 }
-            }
 
-            function up() {
-                document.removeEventListener('mousemove', move);
-                document.removeEventListener('mouseup', up);
-                container.style.cursor = 'auto';
+                function move(e) {
+                    lastDY = e.clientY - startY;
+                    if (!rafScheduled) {
+                        rafScheduled = true;
+                        requestAnimationFrame(updateHeight);
+                    }
+                }
 
-                // Save the new height to storage
-                const finalHeight = resizable.offsetHeight;
-                chrome.storage.local.set({ editorMaxHeight: finalHeight });
-            }
+                function up() {
+                    document.removeEventListener('mousemove', move);
+                    document.removeEventListener('mouseup', up);
+                    container.style.cursor = 'auto';
 
-            document.addEventListener('mousemove', move);
-            document.addEventListener('mouseup', up);
+                    // Save the new height to storage as maxHeight
+                    // const finalHeight = resizable.offsetHeight;
+                    // chrome.storage.local.set({ editorMaxHeight: finalHeight });
+                }
+
+                document.addEventListener('mousemove', move);
+                document.addEventListener('mouseup', up);
+            });
         }
     });
 }
@@ -157,8 +165,8 @@ function initSideConversationDraggable(panel) {
                 panel.style.cursor = 'auto';
 
                 // Save the new width to storage
-                const finalWidth = panel.offsetWidth;
-                chrome.storage.local.set({ sideMinWidth: finalWidth });
+                // const finalWidth = panel.offsetWidth;
+                // chrome.storage.local.set({ sideMinWidth: finalWidth });
             }
 
             document.addEventListener('mousemove', move);
@@ -190,7 +198,9 @@ function attachAllListeners() {
     }
 }
 
-// --- CORE LOGIC ---
+// --- DRAG-TO-RESIZE FUNCTIONALITY ENDS HERE ---
+
+// --- VISIBILITY FUNCTIONALITY STARTS HERE ---
 
 // Function to toggle event visibility
 function toggleEvents(hide) {
@@ -292,6 +302,8 @@ function toggleDaySeparators(hide) {
     console.log('Day separators hidden:', hide);
     console.log('Found day separators:', document.querySelectorAll('.ko-timeline-2_list_days__day-separator_1bbqo9, [class*="day-separator"]').length);
 }
+
+// --- VISIBILITY FUNCTIONALITY ENDS HERE ---
 
 // Listen for messages from popup.js
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {

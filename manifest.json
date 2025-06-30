@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Kayako QoL Enhancer",
   "version": "1.4.0",
-  "description": "Resize text editors dynamically, hide unhelpful ticket elements, and keeps you logged into Kayako accross brands",
+  "description": "Resize editors with popup controls (persistent) or drag-to-resize (overrides all sizes until refresh). Hide ticket elements and stay logged in across brands.",
   "permissions": ["cookies", "scripting", "activeTab", "storage"],
   "optional_host_permissions": ["<all_urls>"],
   "host_permissions": [

@@ -1,6 +1,6 @@
 # Kayako Enhancer Chrome Extension
 
-The Kayako Resizer is a browser extension designed to enhance the agent experience in Kayako by allowing for dynamic and persistent resizing of the text editors. Take control of your workspace by adjusting the main editor's height and the side conversation panel's dimensions to fit your workflow.
+The Kayako Resizer is a browser extension designed to enhance the agent experience in Kayako by allowing for dynamic and persistent resizing of the text editors, as well as keeping you logged in across multiple Kayako brands. Take control of your workspace to fit your workflow.
 
 ## Features
 
@@ -10,10 +10,12 @@ This extension provides several ways to customize your Kayako experience:
     * **Popup Controls**:
         - Click the extension icon to open the control panel
         - Set specific dimensions for Main Editor and Side Conversation Editor
+        - These settings are saved and will be used every time you load a page.
     * **Drag-to-Resize**:
-        - Main Editor: Hover over the top edge and drag to adjust height
-        - Side Panel: Hover over the left edge and drag to adjust width
-    * All size settings are saved automatically
+        - You can resize the main editor or side conversation panel by dragging their edges.
+        - Dragging immediately overrides all other size settings (including popup and Kayako's own defaults) for the current session.
+        - For the side panel, this override ends when you leave the conversation or switch away from it (not just on refresh).
+        - To change the persistent min/max limits, use the popup controls.
 
 2.  **Timeline Customization**:
     * Toggle visibility of different timeline elements:
@@ -22,6 +24,9 @@ This extension provides several ways to customize your Kayako experience:
         - **Date Separators**: Show/hide date dividers
     * Note: Hiding many elements may affect infinite scroll. If content doesn't load, try showing elements, scrolling to load more, then re-hiding.
 
+3.  **Persistent Login**:
+    * When you log in to the Central Kayako brand (e.g., central-supportdesk.kayako.com), the extension keeps you logged in across all your configured Kayako brands automatically. You only need to log in once, and your session is synchronized everywhere.
+
 ## How to Use
 
 ### Using the Popup
@@ -29,21 +34,13 @@ This extension provides several ways to customize your Kayako experience:
 1.  Navigate to a conversation page within your Kayako agent dashboard.
 2.  Click on the **Kayako Resizer icon** in the Chrome toolbar.
 3.  Enter your desired pixel values into the input fields for either the "Main Editor" or "Side Conversation Editor".
-4.  Click the corresponding **Apply** button to see the changes immediately.
+4.  Click the corresponding **Apply** button to see the changes immediately. These values are saved and will be used every time you visit a page.
 5.  Use the toggle switches to show/hide timeline elements like system events, internal notes, and date separators.
 
 ### Using Drag-to-Resize
 
-1.  **To resize the main editor's height:**
-    * Move your cursor to the very top border of the main reply editor.
-    * The cursor will change to a vertical two-headed arrow.
-    * Click and drag up or down to your desired height and release.
-
-2.  **To resize the side conversation panel's width:**
-    * First, ensure a side conversation is open.
-    * Move your cursor to the left-hand border of the side panel.
-    * The cursor will change to a horizontal two-headed arrow.
-    * Click and drag left or right to your desired width and release.
+- To resize, simply drag the edge of the main editor or side conversation panel. This override lasts until you leave the conversation, switch away from the side panel, or reload the page.
+- Dragging always takes priority over popup or default settings for the current session.
 
 ## Installation
 
