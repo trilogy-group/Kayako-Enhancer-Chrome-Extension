@@ -1,3 +1,5 @@
+console.log("content script loaded")
+
 // Function to resize the main editor with both min-height and max-height
 function resizeEditor(minHeight, maxHeight) {
     let editor = document.querySelector(".fr-wrapper");
@@ -303,6 +305,42 @@ function toggleDaySeparators(hide) {
     console.log('Found day separators:', document.querySelectorAll('.ko-timeline-2_list_days__day-separator_1bbqo9, [class*="day-separator"]').length);
 }
 
+/**
+ * Hides or shows all timeline posts from automated systems (Hermes, ATLAS, etc.).
+ * This uses direct DOM manipulation for exact text matching.
+ */
+function toggleAutomatedMessages(hide) {
+    try {
+        console.log('toggleAutomatedMessages called with hide:', hide);
+        
+        // Find all posts
+        const posts = document.querySelectorAll('.ko-timeline-2_list_post__post_1nm4l4');
+        console.log('Found posts:', posts.length);
+        
+        // List of automated system names to hide/show
+        const automatedSystems = ['Hermes', 'ATLAS'];
+        
+        posts.forEach((post, index) => {
+            try {
+                // Find the creator span inside this post
+                const creator = post.querySelector('.ko-timeline-2_list_item__creator_1oksrd');
+                if (creator) {
+                    const creatorText = creator.textContent ? creator.textContent.trim() : '';
+                    console.log(`Post ${index} creator: "${creatorText}"`);
+                    
+                    if (automatedSystems.includes(creatorText)) {
+                        post.style.display = hide ? 'none' : '';
+                        console.log(`Post ${index} from ${creatorText} - ${hide ? 'hidden' : 'shown'}`);
+                    }
+                }
+            } catch (postError) {
+                console.error('Error processing post:', postError);
+            }
+        });
+    } catch (error) {
+        console.error('Error in toggleAutomatedMessages:', error);
+    }
+}
 // --- VISIBILITY FUNCTIONALITY ENDS HERE ---
 
 // Listen for messages from popup.js
@@ -326,6 +364,8 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         toggleInternalNotes(request.hide);
     } else if (request.action === "toggleDaySeparators") {
         toggleDaySeparators(request.hide);
+    } else if (request.action === "toggleAutomatedMessages") {
+        toggleAutomatedMessages(request.hide);
     }
 });
 
@@ -345,7 +385,7 @@ applyAllEditorSizes();
 attachAllListeners();
 
 // Apply saved visibility states on load
-chrome.storage.local.get(["hideEvents", "hideInternalNotes", "hideDates"], (data) => {
+chrome.storage.local.get(["hideEvents", "hideInternalNotes", "hideDates", "hideAutomatedMessages"], (data) => {
     if (data.hideEvents) {
         toggleEvents(true);
     }
@@ -354,5 +394,8 @@ chrome.storage.local.get(["hideEvents", "hideInternalNotes", "hideDates"], (data
     }
     if (data.hideDates) {
         toggleDaySeparators(true);
+    }
+    if (data.hideAutomatedMessages) {
+        toggleAutomatedMessages(true);
     }
 });

@@ -6,6 +6,7 @@ document.addEventListener("DOMContentLoaded", function () {
     let hideEventsToggle = document.getElementById("hide-events");
     let hideInternalNotesToggle = document.getElementById("hide-internal-notes");
     let hideDatesToggle = document.getElementById("hide-dates");
+    let hideAutomatedMessagesToggle = document.getElementById("hide-automated-messages");
 
     // Side conversation editor elements
     let sideMinWidthInput = document.getElementById("side-min-width");
@@ -20,7 +21,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     // Load stored values or set defaults for side conversation editor and toggles
-    chrome.storage.local.get(["sideMinWidth", "sideMinHeight", "sideMaxHeight", "hideEvents", "hideInternalNotes", "hideDates"], (data) => {
+    chrome.storage.local.get(["sideMinWidth", "sideMinHeight", "sideMaxHeight", "hideEvents", "hideInternalNotes", "hideDates", "hideAutomatedMessages"], (data) => {
         sideMinWidthInput.value = data.sideMinWidth || 500;
         sideMinHeightInput.value = data.sideMinHeight || 100;
         sideMaxHeightInput.value = data.sideMaxHeight || 300;
@@ -32,6 +33,9 @@ document.addEventListener("DOMContentLoaded", function () {
         }
         if (hideDatesToggle) {
             hideDatesToggle.checked = data.hideDates || false;
+        }
+        if (hideAutomatedMessagesToggle) {
+            hideAutomatedMessagesToggle.checked = data.hideAutomatedMessages || false;
         }
     });
 
@@ -89,6 +93,20 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
+    // Toggle automated messages
+    if (hideAutomatedMessagesToggle) {
+        hideAutomatedMessagesToggle.addEventListener("change", function() {
+            const shouldHide = this.checked;
+            chrome.storage.local.set({ hideAutomatedMessages: shouldHide });
+            chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+                chrome.tabs.sendMessage(tabs[0].id, {
+                    action: "toggleAutomatedMessages",
+                    hide: shouldHide
+                });
+            });
+        });
+    }
+
     // Main editor apply button
     applyButton.addEventListener("click", function () {
         let newMinSize = parseInt(minSizeInput.value, 10);
@@ -136,7 +154,7 @@ document.addEventListener("DOMContentLoaded", function () {
     
     // Apply the current toggle states on popup open
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-        chrome.storage.local.get(["hideEvents", "hideInternalNotes", "hideDates"], (data) => {  
+        chrome.storage.local.get(["hideEvents", "hideInternalNotes", "hideDates", "hideAutomatedMessages"], (data) => {  
             if (data.hideEvents) {
                 chrome.tabs.sendMessage(tabs[0].id, { 
                     action: "toggleEvents",
@@ -152,6 +170,12 @@ document.addEventListener("DOMContentLoaded", function () {
             if (data.hideDates) {
                 chrome.tabs.sendMessage(tabs[0].id, { 
                     action: "toggleDaySeparators",
+                    hide: true
+                });
+            }
+            if (data.hideAutomatedMessages) {
+                chrome.tabs.sendMessage(tabs[0].id, {
+                    action: "toggleAutomatedMessages",
                     hide: true
                 });
             }
