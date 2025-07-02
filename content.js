@@ -325,8 +325,7 @@ function toggleAutomatedMessages(hide) {
                 // Find the creator span inside this post
                 const creator = post.querySelector('.ko-timeline-2_list_item__creator_1oksrd');
                 if (creator) {
-                    const creatorText = creator.textContent ? creator.textContent.trim() : '';
-                    console.log(`Post ${index} creator: "${creatorText}"`);
+                    const creatorText = creator.textContent ? creator.textContent.trim() : '';                    
                     
                     if (automatedSystems.includes(creatorText)) {
                         post.style.display = hide ? 'none' : '';
