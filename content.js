@@ -29,7 +29,7 @@ function resizeSideConversationEditor(minWidth, minHeight, maxHeight) {
 }
 
 // Default values
-const defaultMinHeight = 44;
+const defaultMinHeight = 200;
 const defaultMaxHeight = 600;
 const defaultSideMinWidth = 500;
 const defaultSideMinHeight = 100;
@@ -305,6 +305,88 @@ function toggleDaySeparators(hide) {
 
 // --- VISIBILITY FUNCTIONALITY ENDS HERE ---
 
+// --- HEADER WRAP FUNCTIONALITY STARTS HERE ---
+
+// When the Side Conversations panel is open the case header bar loses width and
+// its controls (id, Change Brand, SLA, complete, trash, menu) overlap the tabs.
+// Inject a style that, *only* while the panel is open, wraps the entire control
+// cluster (.ko-tabs__right) onto a second line below the tabs. Gated on the
+// panel's open class via :has(), so it reverts automatically when the panel closes.
+function injectHeaderWrapStyle() {
+    const styleId = 'kayako-header-wrap-style';
+    if (document.getElementById(styleId)) return;
+
+    const style = document.createElement('style');
+    style.id = styleId;
+    style.textContent = `
+        /* Let the heading grow to fit a second row of controls.
+           flex: none breaks any fixed flex-basis the parent layout imposes,
+           so the bar's background expands instead of overlapping content below. */
+        body:has(.side-conversations-panel__open_4k6b2r) .ko-agent-content_layout__heading_15wz2w {
+            height: auto !important;
+            min-height: 0 !important;
+            max-height: none !important;
+            flex: none !important;
+            overflow: visible !important;
+        }
+
+        /* Stack the tab list and the control cluster vertically */
+        body:has(.side-conversations-panel__open_4k6b2r) .ko-tabs__tabs_rca1e5 {
+            display: flex !important;
+            flex-wrap: wrap !important;
+            align-items: flex-start !important;
+            height: auto !important;
+            min-height: 0 !important;
+            max-height: none !important;
+        }
+
+        /* Tabs take the full first line */
+        body:has(.side-conversations-panel__open_4k6b2r) .ko-tabs__list_rca1e5 {
+            flex: 1 1 100% !important;
+            min-width: 0 !important;
+        }
+
+        /* Make the three tabs (org, user, subject) share width proportionally so
+           they all truncate with an ellipsis together, instead of org/user
+           keeping full width while only the subject gets cut off. Applies
+           whether or not the side panel is open; when there's room, the tabs
+           size to their content as normal. The ellipsis chain is carried through
+           every nested element (li > span.item > a.link > span.subject) so the
+           "…" actually appears rather than the text being hard-clipped. */
+        .ko-tabs__list_rca1e5 > li {
+            flex: 1 1 auto !important;
+            min-width: 0 !important;
+            overflow: hidden !important;
+            display: flex !important;
+            align-items: center !important;
+        }
+        .ko-tabs__list_rca1e5 > li > .ko-tabs_tab__item_oqn505 {
+            flex: 1 1 auto !important;
+            min-width: 0 !important;
+        }
+        .ko-tabs__list_rca1e5 > li .ko-tabs_tab__item_oqn505,
+        .ko-tabs__list_rca1e5 > li .ko-tabs_tab__link_oqn505,
+        .ko-tabs__list_rca1e5 > li .ko-tabs_case__subject_1cctzl {
+            display: block !important;
+            max-width: 100% !important;
+            overflow: hidden !important;
+            text-overflow: ellipsis !important;
+            white-space: nowrap !important;
+        }
+
+        /* Everything from the id/Change Brand onward drops to its own line */
+        body:has(.side-conversations-panel__open_4k6b2r) .ko-tabs__right_rca1e5 {
+            flex: 1 1 100% !important;
+            width: 100% !important;
+            justify-content: flex-start !important;
+            flex-wrap: wrap !important;
+        }
+    `;
+    document.head.appendChild(style);
+}
+
+// --- HEADER WRAP FUNCTIONALITY ENDS HERE ---
+
 // Listen for messages from popup.js
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.action === "resize") {
@@ -343,6 +425,9 @@ observer.observe(document.body, { childList: true, subtree: true });
 // Also run once on initial load
 applyAllEditorSizes();
 attachAllListeners();
+
+// Inject the header-wrap style (self-activates only while the side panel is open)
+injectHeaderWrapStyle();
 
 // Apply saved visibility states on load
 chrome.storage.local.get(["hideEvents", "hideInternalNotes", "hideDates"], (data) => {
